@@ -16,7 +16,7 @@ public class CallExternalTaskNotificationService implements NotificationService 
 	@Override
 	public void sendMessage(String message) throws IOException {
 
-		String[] cmdline = { configuration.getCommand() , "\"" + message + "\"" }; 
+		String[] cmdline = { configuration.getCommand() , message }; 
 		Runtime.getRuntime().exec(cmdline);
 		
 	}
