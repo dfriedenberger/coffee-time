@@ -14,6 +14,7 @@ import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
 import de.frittenburger.coffee.interfaces.CoffeeService;
 import de.frittenburger.coffee.interfaces.NotificationService;
+import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class CoffeeServiceImpl implements CoffeeService , Runnable {
@@ -23,7 +24,8 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 
 		private final String id;
 		private String town = "unbekannt";
-
+		private TrackPoint trackPoint = null;
+		
 		public Device(String id) {
 			this.id = id;
 		}
@@ -42,6 +44,15 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 			return id + " is in "+town;
 		}
 
+		public TrackPoint getTrackPoint() {
+			return trackPoint;
+		}
+
+		public void setTrackPoint(TrackPoint trackPoint) {
+			this.trackPoint = trackPoint;
+		}
+
+		
 		
 		
 	}
@@ -54,9 +65,12 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 	private final List<NotificationService> notificationServices = new ArrayList<>();
 	private boolean shouldRun = true;
 
-	public CoffeeServiceImpl(CoffeeQueryService coffeeQueryService,PlacesClient placesClient ) {
+	private final DistanceService distanceService;
+
+	public CoffeeServiceImpl(CoffeeQueryService coffeeQueryService,DistanceService distanceService,PlacesClient placesClient ) {
 		this.coffeeQueryService = coffeeQueryService;
 		this.placesClient = placesClient;
+		this.distanceService = distanceService;
 	}
 
 	@Override
@@ -106,10 +120,23 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 
 	private void findCurrentPosition(Collection<TrackPoint> tp, Device device) {
 		List<TrackPoint> tplist = tp.stream().filter(t -> t.getDevice().equals(device.getId())).collect(Collectors.toList());
-		
-		TrackPoint tphe = tplist.get(tplist.size() - 1);
+		TrackPoint currentTp = tplist.get(tplist.size() - 1);
 
-		List<Place> places = placesClient.getPlaces(tphe.getPoint(),50);	
+		TrackPoint lastTp = device.getTrackPoint();
+		
+		
+		if(lastTp != null)
+		{
+			double distance = distanceService.getDistance(lastTp.getPoint(),currentTp.getPoint());
+			
+			logger.info("distance {} since last update of {}",distance,device.getId());
+
+			if(distance < 1.0) return; //No chnmaging
+			
+		}
+		device.setTrackPoint(currentTp);
+		
+		List<Place> places = placesClient.getPlaces(currentTp.getPoint(),50);	
 		
 		
 		List<Town> town = places.stream().filter(Town.class::isInstance).map(Town.class::cast).collect(Collectors.toList());

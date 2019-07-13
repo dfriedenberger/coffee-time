@@ -7,6 +7,7 @@ import java.io.IOException;
 
 
 
+
 import de.frittenburger.api.googleplaces.impl.PlacesClient;
 import de.frittenburger.api.googleplaces.model.PlacesClientConfiguration;
 import de.frittenburger.coffee.impl.CallExternalTaskNotificationService;
@@ -14,6 +15,7 @@ import de.frittenburger.coffee.impl.CoffeeDatabase;
 import de.frittenburger.coffee.impl.CoffeeServiceImpl;
 import de.frittenburger.coffee.impl.ExternalTaskConfiguration;
 import de.frittenburger.coffee.interfaces.NotificationService;
+import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
 import de.frittenburger.subscriber.mqtt.impl.MQTTSubscriberImpl;
 import de.frittenburger.subscriber.mqtt.model.MQTTConfiguration;
 
@@ -33,7 +35,7 @@ public class CoffeeTimeApplication {
 		
 		PlacesClientConfiguration placesClientConfiguration = configuration.get(PlacesClientConfiguration.class);
 
-		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl(coffeedatabase,new PlacesClient(placesClientConfiguration));
+		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl(coffeedatabase,new GeoDistanceServiceImpl(),new PlacesClient(placesClientConfiguration));
 		
 		
 		coffeeService.addNotificationService(notificationService);
