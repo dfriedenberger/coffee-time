@@ -8,7 +8,7 @@
   <properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
   </properties>
   
    <dependencies>
@@ -59,5 +59,18 @@
     		<scope>test</scope>
   		 </dependency>
 	</dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>de.frittenburger.app.CoffeeTimeApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
   
 </project>

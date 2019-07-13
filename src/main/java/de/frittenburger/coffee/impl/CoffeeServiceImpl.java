@@ -94,10 +94,6 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 			
 			devices.forEach(d -> findCurrentPosition(tp,d));
 			
-
-
-		
-			
 			
 			try {
 				Thread.sleep(50000);
@@ -130,10 +126,10 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 				if(device.setTown(town.get(0).getName()))
 				{
 					logger.info("Position changed");
+					sendMessage(device.isInTown());
 				}
 				
 				logger.info("{} ",device.isInTown());
-				sendMessage(device.isInTown());
 				break;
 		}
 		
