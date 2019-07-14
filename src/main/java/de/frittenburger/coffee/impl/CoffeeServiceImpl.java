@@ -13,6 +13,7 @@ import de.frittenburger.api.googleplaces.model.Place;
 import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
 import de.frittenburger.coffee.interfaces.CoffeeService;
+import de.frittenburger.coffee.interfaces.MetricService;
 import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.model.TrackPoint;
@@ -67,6 +68,7 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 
 	private final DistanceService distanceService;
 
+
 	public CoffeeServiceImpl(CoffeeQueryService coffeeQueryService,DistanceService distanceService,PlacesClient placesClient ) {
 		this.coffeeQueryService = coffeeQueryService;
 		this.placesClient = placesClient;
@@ -98,19 +100,21 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 		devices.add(new Device("HE"));
 		devices.add(new Device("DF"));
 
-		
+		long lastUpdate = 0;
 		
 		while(shouldRun)
 		{
 			
-			Collection<TrackPoint> tp = coffeeQueryService.getTrackPoints();
-			
-			
-			devices.forEach(d -> findCurrentPosition(tp,d));
-			
+			long update = coffeeQueryService.getUpdateTime();
+			if(update > lastUpdate)
+			{
+				lastUpdate = update;
+				Collection<TrackPoint> tp = coffeeQueryService.getTrackPoints();
+				devices.forEach(d -> findCurrentPosition(tp,d));
+			}
 			
 			try {
-				Thread.sleep(50000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

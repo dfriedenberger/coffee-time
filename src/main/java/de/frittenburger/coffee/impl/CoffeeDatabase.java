@@ -41,6 +41,7 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 	
 	private final File dataPath;
 	private final Map<String, List<Object>> cache = new HashMap<>();
+	private long updateTime = 0;
 	
 	public CoffeeDatabase(File dataPath)
 	{
@@ -67,7 +68,11 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 	}
 
 	
-	
+	@Override
+	public long getUpdateTime() {
+		return updateTime;
+	}
+
 	
 
 
@@ -187,6 +192,8 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 
 	private void add(String type, Date date, Object obj) {
 		
+		updateTime = new Date().getTime();
+		
 		if(!cache.containsKey(type))
 			cache.put(type, new ArrayList<>());
 		cache.get(type).add(obj);
@@ -201,6 +208,8 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 		return (Collection<T>) cache.get(type);
 	}
 
+
+	
 	
 
 }

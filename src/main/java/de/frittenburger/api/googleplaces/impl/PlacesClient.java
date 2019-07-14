@@ -21,6 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.api.googleplaces.model.Place;
 import de.frittenburger.api.googleplaces.model.PlacesClientConfiguration;
+import de.frittenburger.coffee.impl.MetricServiceImpl;
+import de.frittenburger.coffee.interfaces.MetricService;
+import de.frittenburger.coffee.model.MetricException;
 import de.frittenburger.geo.model.GeoPoint;
 
 public class PlacesClient {
@@ -30,15 +33,20 @@ public class PlacesClient {
 
 	private static final Function<JsonNode,Place> mapper = new ResponseToPlacesMapper();
 
-	private PlacesClientConfiguration configuration;
+	private final PlacesClientConfiguration configuration;
+	private final MetricService metricService;
 
-	public PlacesClient(PlacesClientConfiguration configuration) {
+	public PlacesClient(PlacesClientConfiguration configuration, MetricService metricService) {
 		this.configuration = configuration;
+		this.metricService = metricService;
 	}
 
 	public List<Place> getPlaces(GeoPoint point,int distance) {
 
 		try {
+			
+			metricService.permit("google.nearbysearch");
+
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		
 		
@@ -80,9 +88,6 @@ public class PlacesClient {
 		    for(JsonNode node : tree.get("results"))
 		    {
 		    	places.add(mapper.apply(node));
-		    	
-		    
-		    	
 		    }
 		    return places;
 		} catch (IOException e) {
@@ -90,9 +95,12 @@ public class PlacesClient {
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (MetricException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 		}
-		return null;
+		return new ArrayList<>();
 		
 		
 	}

@@ -8,4 +8,6 @@ public interface CoffeeQueryService {
 
 	Collection<TrackPoint> getTrackPoints();
 
+	long getUpdateTime();
+
 }

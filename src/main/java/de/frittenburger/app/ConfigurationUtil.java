@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.frittenburger.coffee.model.MetricServiceConfiguration;
+
 
 public class ConfigurationUtil {
 
@@ -27,19 +29,25 @@ public class ConfigurationUtil {
 
 
 
-	public <T> T  get(Class<T> clazz) throws IOException, ReflectiveOperationException {
+	public <T> T  get(Class<T> clazz,T defaultObject) throws IOException {
 
+		
 		
 		String filename = clazz.getSimpleName().toLowerCase().replace("configuration", "") + ".json";
 		File file = new File(configPath,filename);
 		
 		if(!file.exists())
 		{
-			new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, clazz.newInstance());
+			new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, defaultObject);
 		}
 		
 		return new ObjectMapper().readValue(file,clazz);
 		
+	}
+
+	
+	public <T> T  get(Class<T> clazz) throws IOException, ReflectiveOperationException {
+		return get(clazz,clazz.newInstance());
 	}
 
 
@@ -48,4 +56,7 @@ public class ConfigurationUtil {
 		return dataPath;
 	}
 
+
+
+	
 }
