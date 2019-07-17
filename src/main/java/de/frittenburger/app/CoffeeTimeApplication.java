@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.frittenburger.api.googleplaces.impl.PlacesClient;
+import de.frittenburger.api.googleplaces.impl.WebClientImpl;
 import de.frittenburger.api.googleplaces.model.PlacesClientConfiguration;
 import de.frittenburger.coffee.impl.CallExternalTaskNotificationService;
 import de.frittenburger.coffee.impl.CoffeeDatabase;
@@ -56,7 +57,7 @@ public class CoffeeTimeApplication {
 		
 		PlacesClientConfiguration placesClientConfiguration = configuration.get(PlacesClientConfiguration.class);
 
-		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl(coffeedatabase,new GeoDistanceServiceImpl(),new PlacesClient(placesClientConfiguration,metricService));
+		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl(coffeedatabase,new GeoDistanceServiceImpl(),new PlacesClient(placesClientConfiguration,metricService,new WebClientImpl()));
 		
 		
 		coffeeService.addNotificationService(notificationService);

@@ -15,8 +15,8 @@ import de.frittenburger.geo.model.GeoPoint;
 public class ResponseToPlacesMapper implements Function<JsonNode, Place> {
 
 	
-	private static final List<String> TOWNTYPES = Arrays.asList("locality,political".split(","));
 	
+	private Function<List<String>,Place> typetoPlaceMapper = new TypeToPlaceMapper();
 	
 	@Override
 	public Place apply(JsonNode node) {
@@ -35,14 +35,9 @@ public class ResponseToPlacesMapper implements Function<JsonNode, Place> {
     	
     	List<String> type = StreamSupport.stream(node.get("types").spliterator(),true).map(n -> n.asText()).collect(Collectors.toList());
     	
-    	Place place = new Place();
-    	place.setType(type.get(0));
     	
-    	if(TOWNTYPES.equals(type))
-    	{
-    		place = new Town();
-    	   
-    	}
+    	Place place = typetoPlaceMapper.apply(type);
+    	
     	 
     	place.setLocation(p);
     	place.setName(name);

@@ -1,4 +1,4 @@
-package de.frittenburger.subscriber.mqtt.impl;
+ package de.frittenburger.subscriber.mqtt.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
