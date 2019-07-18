@@ -20,13 +20,19 @@ import de.frittenburger.api.googleplaces.model.PlacesClientConfiguration;
 import de.frittenburger.coffee.impl.CallExternalTaskNotificationService;
 import de.frittenburger.coffee.impl.CoffeeDatabase;
 import de.frittenburger.coffee.impl.CoffeeServiceImpl;
+import de.frittenburger.coffee.impl.FindLocationJob;
 import de.frittenburger.coffee.impl.MetricServiceImpl;
+import de.frittenburger.coffee.impl.PlaceResolveServiceImpl;
 import de.frittenburger.coffee.interfaces.MetricService;
 import de.frittenburger.coffee.interfaces.NotificationService;
+import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.model.ExternalTaskConfiguration;
 import de.frittenburger.coffee.model.MetricLimit;
 import de.frittenburger.coffee.model.MetricServiceConfiguration;
 import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
+import de.frittenburger.geo.impl.PositionServiceImpl;
+import de.frittenburger.geo.interfaces.PositionService;
+import de.frittenburger.geo.model.TrackPoint;
 import de.frittenburger.subscriber.mqtt.impl.MQTTSubscriberImpl;
 import de.frittenburger.subscriber.mqtt.model.MQTTConfiguration;
 
@@ -57,11 +63,16 @@ public class CoffeeTimeApplication {
 		
 		PlacesClientConfiguration placesClientConfiguration = configuration.get(PlacesClientConfiguration.class);
 
-		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl(coffeedatabase,new GeoDistanceServiceImpl(),new PlacesClient(placesClientConfiguration,metricService,new WebClientImpl()));
 		
 		
-		coffeeService.addNotificationService(notificationService);
 		
+		CoffeeServiceImpl coffeeService = new CoffeeServiceImpl();
+		
+		
+
+		
+		coffeeService.addJob(new FindLocationJob(coffeedatabase,notificationService,new GeoDistanceServiceImpl(),
+				new PlaceResolveServiceImpl(new PlacesClient(placesClientConfiguration,metricService,new WebClientImpl())), new PositionServiceImpl()) );
 		
 		
 		

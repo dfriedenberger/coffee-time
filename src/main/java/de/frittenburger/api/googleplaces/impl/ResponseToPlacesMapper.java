@@ -1,6 +1,5 @@
 package de.frittenburger.api.googleplaces.impl;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,7 +8,6 @@ import java.util.stream.StreamSupport;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import de.frittenburger.api.googleplaces.model.Place;
-import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.geo.model.GeoPoint;
 
 public class ResponseToPlacesMapper implements Function<JsonNode, Place> {

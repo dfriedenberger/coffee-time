@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import de.frittenburger.api.googleplaces.impl.PlacesClient;
-import de.frittenburger.api.googleplaces.impl.WebClientImpl;
-import de.frittenburger.api.googleplaces.interfaces.WebClient;
 
 public class PlacesClientTest {
 

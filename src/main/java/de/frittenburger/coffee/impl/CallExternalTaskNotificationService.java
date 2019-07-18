@@ -18,12 +18,20 @@ public class CallExternalTaskNotificationService implements NotificationService 
 	}
 
 	@Override
-	public void sendMessage(String message) throws IOException, MetricException {
+	public void sendMessage(String message)  {
 
-		metricService.permit(configuration.getName());
-
-		String[] cmdline = { configuration.getCommand() , message }; 
-		Runtime.getRuntime().exec(cmdline);
+		try
+		{
+			metricService.permit(configuration.getName());
+	
+			String[] cmdline = { configuration.getCommand() , message }; 
+			Runtime.getRuntime().exec(cmdline);
+		}
+		catch(IOException | MetricException e)
+		{
+			e.printStackTrace();
+		}
+		
 		
 	}
 

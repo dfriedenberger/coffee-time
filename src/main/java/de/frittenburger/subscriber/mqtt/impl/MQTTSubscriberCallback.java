@@ -35,7 +35,7 @@ public class MQTTSubscriberCallback implements MqttCallback {
 
 	@Override
 	public void connectionLost(Throwable e) {
-		logger.error("connectionLost",e);
+		logger.error("connectionLost",e.getMessage());
 	}
 
 	@Override
@@ -74,5 +74,7 @@ public class MQTTSubscriberCallback implements MqttCallback {
 		}
 		
 	}
+
+	
 
 }

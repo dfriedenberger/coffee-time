@@ -1,5 +1,6 @@
 package de.frittenburger.subscriber.mqtt.impl;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -29,7 +30,8 @@ public class MQTTSubscriberImpl implements MQTTSubscriber , Runnable {
 		try {
 			client = new MqttClient(mqttConfiguration.getServer(), "2");
 	        
-			client.setCallback(new MQTTSubscriberCallback(coffeeCommandService));
+			MQTTSubscriberCallback callback = new MQTTSubscriberCallback(coffeeCommandService);
+			client.setCallback(callback);
 
 			MqttConnectOptions options = new MqttConnectOptions();
 			options.setUserName(mqttConfiguration.getUsername());
@@ -40,25 +42,39 @@ public class MQTTSubscriberImpl implements MQTTSubscriber , Runnable {
 			options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 
 		
-
-			logger.info("starting connect the server {}",mqttConfiguration.getServer());
-			client.connect(options);
-			logger.info("connected!");
-			
-			Thread.sleep(1000);
-
-			logger.info("subscribe to topic {}",mqttConfiguration.getTopic());
-
-			client.subscribe(mqttConfiguration.getTopic(),0);
-				
 			while(true)
 			{
-				Thread.sleep(1000);
+				try {
+					
+					if(!client.isConnected())
+					{
+						logger.info("starting connect the server {}",mqttConfiguration.getServer());
+						client.connect(options);
+						logger.info("connected!");
+						
+						Thread.sleep(1000);
+			
+						logger.info("subscribe to topic {}",mqttConfiguration.getTopic());
+			
+						client.subscribe(mqttConfiguration.getTopic(),0);
+					}
+				
+					Thread.sleep(1000);
+					continue;
+				} 
+				catch(MqttException e)
+				{
+					logger.error(e);
+					logger.info("wait 10 Seconds before reconnect");
+					Thread.sleep(10000);
+
+				}
 			}
 
+		}
+		catch(InterruptedException e) {
+				logger.error(e);
 		} catch (MqttException e) {
-			logger.error(e);
-		} catch (Exception e) {
 			logger.error(e);
 		}
 		finally 

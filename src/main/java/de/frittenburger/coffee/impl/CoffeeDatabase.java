@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.frittenburger.coffee.interfaces.CoffeeCommandService;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
+import de.frittenburger.coffee.model.Device;
 import de.frittenburger.geo.model.GeoRegion;
 import de.frittenburger.geo.model.TrackPoint;
 
@@ -41,11 +42,19 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 	
 	private final File dataPath;
 	private final Map<String, List<Object>> cache = new HashMap<>();
+	private final List<Device> devices = new ArrayList<>();
+
 	private long updateTime = 0;
+	
+
 	
 	public CoffeeDatabase(File dataPath)
 	{
 		this.dataPath = dataPath;
+		
+		//Workaround
+		devices.add(new Device("HE"));
+		devices.add(new Device("DF"));
 	}
 	
 	
@@ -173,9 +182,9 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 		              
 		              Object obj = new ObjectMapper().treeToValue(tree, Class.forName(header.get("class")));
 		              Date date = timestampFormat.parse(header.get("time"));
-		              System.out.println(header.get("type"));
-		              System.out.println(date);
-		              System.out.println(obj);
+		              //System.out.println(header.get("type"));
+		              //System.out.println(date);
+		              //System.out.println(obj);
 		              add(header.get("type"),date,obj);
 		              
 		              
@@ -206,6 +215,12 @@ public class CoffeeDatabase implements CoffeeQueryService , CoffeeCommandService
 		if(!cache.containsKey(type))		
 			return new ArrayList<>();
 		return (Collection<T>) cache.get(type);
+	}
+
+
+	@Override
+	public Collection<Device> getDevices() {
+		return devices;
 	}
 
 
