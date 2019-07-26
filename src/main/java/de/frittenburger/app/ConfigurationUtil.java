@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.frittenburger.coffee.model.MetricServiceConfiguration;
 
 
 public class ConfigurationUtil {

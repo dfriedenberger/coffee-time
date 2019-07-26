@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.frittenburger.coffee.interfaces.CoffeeJob;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
+import de.frittenburger.coffee.interfaces.DistanceStrategy;
 import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.model.Device;
@@ -25,16 +26,16 @@ public class FindLocationJob implements CoffeeJob {
 
 	private final CoffeeQueryService coffeeQueryService;
 	private final NotificationService notificationService;
-	private final DistanceService distanceService;
+	private final DistanceStrategy distanceStrategy;
 	private final PlaceResolveService placeResolveService;
 	private final PositionService positionService;
 
 	
-	public FindLocationJob(CoffeeQueryService coffeeQueryService, NotificationService notificationService,DistanceService distanceService, 
+	public FindLocationJob(CoffeeQueryService coffeeQueryService, NotificationService notificationService,DistanceStrategy distanceStrategy, 
 			PlaceResolveService placeResolveService,PositionService positionService) {
 		this.coffeeQueryService = coffeeQueryService;
 		this.notificationService = notificationService;
-		this.distanceService = distanceService;
+		this.distanceStrategy = distanceStrategy;
 		this.placeResolveService = placeResolveService;
 		this.positionService = positionService;
 	}
@@ -77,17 +78,19 @@ public class FindLocationJob implements CoffeeJob {
 		
 		
 		
-		
-		
-		
 		//position changed more then 500 meters?
-		TrackPoint lastTp = device.getTrackPoint();
+		
+		if(!distanceStrategy.positionChangeIsRelevant(device.getTrackPoint(),currentTp))
+			return;
+		/*
 		if(lastTp != null)
 		{
+			
 			double distance = distanceService.getDistance(lastTp.getPoint(),currentTp.getPoint());
 			logger.info("distance {} since last update of {}",distance,device.getId());
 			if(distance < 0.5) return; //500 meters
 		}
+		*/
 		device.setTrackPoint(currentTp);
 		
 		
