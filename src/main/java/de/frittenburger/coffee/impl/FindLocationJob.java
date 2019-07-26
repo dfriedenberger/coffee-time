@@ -14,7 +14,6 @@ import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.model.Device;
 import de.frittenburger.coffee.model.MetricException;
-import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.interfaces.PositionService;
 import de.frittenburger.geo.model.TrackPoint;
 
@@ -82,15 +81,8 @@ public class FindLocationJob implements CoffeeJob {
 		
 		if(!distanceStrategy.positionChangeIsRelevant(device.getTrackPoint(),currentTp))
 			return;
-		/*
-		if(lastTp != null)
-		{
-			
-			double distance = distanceService.getDistance(lastTp.getPoint(),currentTp.getPoint());
-			logger.info("distance {} since last update of {}",distance,device.getId());
-			if(distance < 0.5) return; //500 meters
-		}
-		*/
+		
+		
 		device.setTrackPoint(currentTp);
 		
 		

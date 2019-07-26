@@ -11,6 +11,7 @@ import de.frittenburger.api.googleplaces.model.Establishment;
 import de.frittenburger.api.googleplaces.model.Place;
 import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
+import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.model.GeoPoint;
 
 public class PlaceResolveServiceImpl implements PlaceResolveService {
@@ -19,8 +20,11 @@ public class PlaceResolveServiceImpl implements PlaceResolveService {
 
 	private final PlacesClient placesClient;
 
-	public PlaceResolveServiceImpl(PlacesClient placesClient) {
+	private final DistanceService distanceService;
+
+	public PlaceResolveServiceImpl(PlacesClient placesClient,DistanceService distanceService) {
 		this.placesClient = placesClient;
+		this.distanceService = distanceService;
 	}
 
 	@Override
@@ -52,6 +56,16 @@ public class PlaceResolveServiceImpl implements PlaceResolveService {
 		if(places.size() == 0)
 			return null; //Nothing found
 			
+		
+		for(Place place : places)
+		{
+			GeoPoint location = place.getLocation();
+			double distance = distanceService.getDistance(point, location);
+			
+			logger.debug("{} with distance {}",place,distance);
+			
+		}
+		
 		
 		
 		Establishment establishment = get(places,Establishment.class);

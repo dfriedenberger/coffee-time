@@ -21,7 +21,7 @@ public class DistanceStrategyImpl implements DistanceStrategy {
 		
 		double distance = distanceService.getDistance(lastTrackPoint.getPoint(),currentTrackPoint.getPoint());
 		
-		double timeH = (currentTrackPoint.getTime() - lastTrackPoint.getTime()) / (1000 * 3600);
+		double timeH = (currentTrackPoint.getTime() - lastTrackPoint.getTime()) / (1000 * 3600.0);
 		
 		if(timeH > 0)
 		{

@@ -16,15 +16,19 @@ import de.frittenburger.api.googleplaces.model.Route;
 import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.impl.PlaceResolveServiceImpl;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
+import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.model.GeoPoint;
 
 public class PlaceResolveServiceImplTest {
 
 	private PlacesClient placesClient;
+	private DistanceService distanceService;
 
 	@Before
 	public void setUp() throws Exception {
-		placesClient = Mockito.mock(PlacesClient.class);		
+		placesClient = Mockito.mock(PlacesClient.class);	
+		distanceService = Mockito.mock(DistanceService.class);		
+
 	}
 
 	@Test
@@ -35,7 +39,7 @@ public class PlaceResolveServiceImplTest {
 		when(placesClient.getPlaces(point, 50)).thenReturn(Arrays.asList(
 				nearestTown,new Establishment(),new Establishment(),new Route()));
 	 
-		PlaceResolveService service = new PlaceResolveServiceImpl(placesClient);
+		PlaceResolveService service = new PlaceResolveServiceImpl(placesClient,distanceService);
 		
 		Town town = service.getNearestTown(point);
 		
@@ -59,7 +63,7 @@ public class PlaceResolveServiceImplTest {
 		when(placesClient.getPlaces(point, 50)).thenReturn(Arrays.asList(
 				town,route,esta1,esta2));
 	 
-		PlaceResolveService service = new PlaceResolveServiceImpl(placesClient);
+		PlaceResolveService service = new PlaceResolveServiceImpl(placesClient,distanceService);
 		
 		String adress = service.getNearestAdress(point);
 		

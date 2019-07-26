@@ -70,7 +70,7 @@ public class CoffeeTimeApplication {
 
 		
 		coffeeService.addJob(new FindLocationJob(coffeedatabase,notificationService,new DistanceStrategyImpl(new GeoDistanceServiceImpl()),
-				new PlaceResolveServiceImpl(new PlacesClient(placesClientConfiguration,metricService,new WebClientImpl())), new PositionServiceImpl()) );
+				new PlaceResolveServiceImpl(new PlacesClient(placesClientConfiguration,metricService,new WebClientImpl()),new GeoDistanceServiceImpl()), new PositionServiceImpl()) );
 		
 		
 		
