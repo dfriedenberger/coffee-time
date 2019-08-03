@@ -49,7 +49,7 @@ public class FindLocationJob implements CoffeeJob {
 		if(update > lastUpdate)
 		{
 			lastUpdate = update;
-			
+			logger.info("DatabaseUpdate");
 			Collection<TrackPoint> tp = coffeeQueryService.getTrackPoints();
 			Collection<Device> devices = coffeeQueryService.getDevices();
 			
@@ -78,7 +78,6 @@ public class FindLocationJob implements CoffeeJob {
 		
 		
 		//position changed more then 500 meters?
-		
 		if(!distanceStrategy.positionChangeIsRelevant(device.getTrackPoint(),currentTp))
 			return;
 		

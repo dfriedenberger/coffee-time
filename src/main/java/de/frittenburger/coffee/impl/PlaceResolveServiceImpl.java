@@ -61,9 +61,7 @@ public class PlaceResolveServiceImpl implements PlaceResolveService {
 		{
 			GeoPoint location = place.getLocation();
 			double distance = distanceService.getDistance(point, location);
-			
-			logger.debug("{} with distance {}",place,distance);
-			
+			logger.info("{} type:{} distance:{}",place.getName(),place.getType(),distance);
 		}
 		
 		

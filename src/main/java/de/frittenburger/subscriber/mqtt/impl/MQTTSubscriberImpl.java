@@ -28,7 +28,7 @@ public class MQTTSubscriberImpl implements MQTTSubscriber , Runnable {
 		
 		MqttClient client = null;
 		try {
-			client = new MqttClient(mqttConfiguration.getServer(), "2");
+			client = new MqttClient(mqttConfiguration.getServer(), mqttConfiguration.getClientId());
 	        
 			MQTTSubscriberCallback callback = new MQTTSubscriberCallback(coffeeCommandService);
 			client.setCallback(callback);

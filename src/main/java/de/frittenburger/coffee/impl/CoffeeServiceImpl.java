@@ -35,7 +35,7 @@ public class CoffeeServiceImpl implements CoffeeService , Runnable {
 		while(shouldRun)
 		{
 			
-			
+			logger.trace("step");
 			for(CoffeeJob job : jobs)
 			{
 				try

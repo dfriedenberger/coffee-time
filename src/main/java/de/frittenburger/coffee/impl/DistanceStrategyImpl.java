@@ -1,10 +1,15 @@
 package de.frittenburger.coffee.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.frittenburger.coffee.interfaces.DistanceStrategy;
 import de.frittenburger.geo.interfaces.DistanceService;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class DistanceStrategyImpl implements DistanceStrategy {
+
+	private static final Logger logger = LogManager.getLogger(DistanceStrategyImpl.class);
 
 	private final DistanceService distanceService;
 
@@ -21,21 +26,27 @@ public class DistanceStrategyImpl implements DistanceStrategy {
 		
 		double distance = distanceService.getDistance(lastTrackPoint.getPoint(),currentTrackPoint.getPoint());
 		
-		double timeH = (currentTrackPoint.getTime() - lastTrackPoint.getTime()) / (1000 * 3600.0);
+		long timeMiliSeconds = (currentTrackPoint.getTime() - lastTrackPoint.getTime());
 		
-		if(timeH > 0)
+		boolean relevant = (distance > 500);
+		double speed = 0;
+		if(timeMiliSeconds > 0)
 		{
-			double speed = distance / (1000 * timeH);
+			speed = distance / (timeMiliSeconds / 3600.0);
 			if(speed < 6)
-				return (distance > 500);
-			if(speed < 25)
-				return (distance > 3000);
-			if(speed < 50)
-				return (distance > 10000);
-			return (distance > 50000); //120 kmh
+				relevant =  (distance > 500);
+			else if(speed < 25)
+				relevant =  (distance > 3000);
+			else if(speed < 50)
+				relevant = (distance > 10000);
+			else 
+				relevant = (distance > 50000); //120 kmh
 		}
-		return (distance > 500);
 		
+		logger.debug("distance {}m time {}s speed {}km/h => relevant {}",distance, timeMiliSeconds/1000, speed, relevant);
+
+		return relevant;
+
 	}
 
 }

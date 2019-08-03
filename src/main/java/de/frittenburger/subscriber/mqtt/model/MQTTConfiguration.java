@@ -6,6 +6,7 @@ public class MQTTConfiguration {
 	private String server;
 	private String username;
 	private String password;
+	private String clientId;
 	private String topic;
 
 	public String getServer() {
@@ -25,6 +26,12 @@ public class MQTTConfiguration {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getClientId() {
+		return clientId;
+	}
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 	public String getTopic() {
 		return topic;
