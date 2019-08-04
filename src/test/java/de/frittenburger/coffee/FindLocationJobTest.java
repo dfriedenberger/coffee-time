@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
@@ -21,11 +19,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.Mockito.*;
-import de.frittenburger.api.googleplaces.impl.PlacesClient;
-import de.frittenburger.api.googleplaces.impl.WebClientImpl;
 import de.frittenburger.coffee.impl.DistanceStrategyImpl;
 import de.frittenburger.coffee.impl.FindLocationJob;
-import de.frittenburger.coffee.impl.PlaceResolveServiceImpl;
 import de.frittenburger.coffee.interfaces.CoffeeJob;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
 import de.frittenburger.coffee.interfaces.DistanceStrategy;
