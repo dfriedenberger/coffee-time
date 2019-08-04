@@ -45,7 +45,7 @@ public class DistanceStrategyImplTest {
 
 		TrackPoint currentTrackPoint = new TrackPoint();
 		currentTrackPoint.setPoint(new GeoPoint());
-		currentTrackPoint.setTime(60 * 60 * 1000L); //500 Meter pro Stunde (sehr langsam)
+		currentTrackPoint.setTime(3600); //500 Meter pro Stunde (sehr langsam)
 		
 		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(500.0);
 		
@@ -63,7 +63,7 @@ public class DistanceStrategyImplTest {
 
 		TrackPoint currentTrackPoint = new TrackPoint();
 		currentTrackPoint.setPoint(new GeoPoint());
-		currentTrackPoint.setTime(60 * 60 * 1000L); //500 Meter pro Stunde (sehr langsam)
+		currentTrackPoint.setTime(3600); //500 Meter pro Stunde (sehr langsam)
 		
 		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(500.1);
 		
@@ -83,7 +83,7 @@ public class DistanceStrategyImplTest {
 
 		TrackPoint currentTrackPoint = new TrackPoint();
 		currentTrackPoint.setPoint(new GeoPoint());
-		currentTrackPoint.setTime(60 * 1000L); //60km/h => 1km pro Minute
+		currentTrackPoint.setTime(60); //60km/h => 1km pro Minute
 
 		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(1000.0);
 		

@@ -26,13 +26,13 @@ public class DistanceStrategyImpl implements DistanceStrategy {
 		
 		double distance = distanceService.getDistance(lastTrackPoint.getPoint(),currentTrackPoint.getPoint());
 		
-		long timeMiliSeconds = (currentTrackPoint.getTime() - lastTrackPoint.getTime());
+		long timeSeconds = (currentTrackPoint.getTime() - lastTrackPoint.getTime());
 		
 		boolean relevant = (distance > 500);
 		double speed = 0;
-		if(timeMiliSeconds > 0)
+		if(timeSeconds > 0)
 		{
-			speed = distance / (timeMiliSeconds / 3600.0);
+			speed = distance / (timeSeconds / 3.6);
 			if(speed < 6)
 				relevant =  (distance > 500);
 			else if(speed < 25)
@@ -43,7 +43,7 @@ public class DistanceStrategyImpl implements DistanceStrategy {
 				relevant = (distance > 50000); //120 kmh
 		}
 		
-		logger.debug("distance {}m time {}s speed {}km/h => relevant {}",distance, timeMiliSeconds/1000, speed, relevant);
+		logger.debug("distance {}m time {}s speed {}km/h => relevant {}",distance, timeSeconds, speed, relevant);
 
 		return relevant;
 
