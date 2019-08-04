@@ -29,7 +29,7 @@ public class DistanceStrategyImplTest {
 		TrackPoint currentTrackPoint = new TrackPoint();
 		currentTrackPoint.setPoint(new GeoPoint());
 
-		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(500.1);
+		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(0.5);//500m
 		
 		assertTrue(strategy.positionChangeIsRelevant(null, currentTrackPoint));
 
@@ -47,7 +47,7 @@ public class DistanceStrategyImplTest {
 		currentTrackPoint.setPoint(new GeoPoint());
 		currentTrackPoint.setTime(3600); //500 Meter pro Stunde (sehr langsam)
 		
-		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(500.0);
+		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(0.5); //500m
 		
 		assertFalse(strategy.positionChangeIsRelevant(lastTrackpoint, currentTrackPoint));
 	}
@@ -65,7 +65,7 @@ public class DistanceStrategyImplTest {
 		currentTrackPoint.setPoint(new GeoPoint());
 		currentTrackPoint.setTime(3600); //500 Meter pro Stunde (sehr langsam)
 		
-		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(500.1);
+		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(0.501); //501m
 		
 		assertTrue(strategy.positionChangeIsRelevant(lastTrackpoint, currentTrackPoint));
 
@@ -85,7 +85,7 @@ public class DistanceStrategyImplTest {
 		currentTrackPoint.setPoint(new GeoPoint());
 		currentTrackPoint.setTime(60); //60km/h => 1km pro Minute
 
-		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(1000.0);
+		when(distanceService.getDistance(any(GeoPoint.class), any(GeoPoint.class))).thenReturn(1.0); //1KM
 		
 		assertFalse(strategy.positionChangeIsRelevant(lastTrackpoint, currentTrackPoint));
 

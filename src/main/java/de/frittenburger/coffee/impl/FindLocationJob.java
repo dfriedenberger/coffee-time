@@ -2,6 +2,7 @@ package de.frittenburger.coffee.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -53,10 +54,11 @@ public class FindLocationJob implements CoffeeJob {
 			Collection<TrackPoint> tp = coffeeQueryService.getTrackPoints();
 			Collection<Device> devices = coffeeQueryService.getDevices();
 			
-			devices.forEach(d -> { 
+			devices.forEach(device -> { 
 				
 					try {
-						findCurrentPosition(tp,d);
+						List<TrackPoint> tp4device = tp.stream().filter(t -> t.getDevice().equals(device.getId())).collect(Collectors.toList());
+						findCurrentPosition(tp4device,device);
 					} catch (IOException e) {
 						logger.error(e);
 					} catch (MetricException e) {
@@ -70,11 +72,17 @@ public class FindLocationJob implements CoffeeJob {
 	}
 
 	
-	private void findCurrentPosition(Collection<TrackPoint> tp, Device device) throws IOException, MetricException {
+	private void findCurrentPosition(List<TrackPoint> tp, Device device) throws IOException, MetricException {
 		
-		//Find position and use it if changed more than 500 meters
-		TrackPoint currentTp = positionService.getLastPosition(tp.stream().filter(t -> t.getDevice().equals(device.getId())).collect(Collectors.toList()));
 		
+		if(tp.isEmpty())
+		{
+			logger.warn("no track points found for {}", device.getId());
+			return;
+		}
+		
+		//Find position and use it if changed more than 500 meters		
+		TrackPoint currentTp = positionService.getLastPosition(tp);
 		
 		
 		//position changed more then 500 meters?
@@ -90,7 +98,7 @@ public class FindLocationJob implements CoffeeJob {
 		
 		if(adress == null) 
 		{
-			logger.info("new position found for {}", device.getId());
+			logger.warn("no position found for {}", device.getId());
 			return;
 		}
 		
