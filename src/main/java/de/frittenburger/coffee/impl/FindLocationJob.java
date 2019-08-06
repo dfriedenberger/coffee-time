@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.interfaces.CoffeeJob;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
-import de.frittenburger.coffee.interfaces.DistanceStrategy;
 import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
+import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.Device;
 import de.frittenburger.coffee.model.MetricException;
-import de.frittenburger.geo.interfaces.PositionService;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class FindLocationJob implements CoffeeJob {
@@ -26,18 +26,16 @@ public class FindLocationJob implements CoffeeJob {
 
 	private final CoffeeQueryService coffeeQueryService;
 	private final NotificationService notificationService;
-	private final DistanceStrategy distanceStrategy;
+	private final ProfilStrategy profilStrategy;
 	private final PlaceResolveService placeResolveService;
-	private final PositionService positionService;
 
 	
-	public FindLocationJob(CoffeeQueryService coffeeQueryService, NotificationService notificationService,DistanceStrategy distanceStrategy, 
-			PlaceResolveService placeResolveService,PositionService positionService) {
+	public FindLocationJob(CoffeeQueryService coffeeQueryService, NotificationService notificationService,ProfilStrategy profilStrategy, 
+			PlaceResolveService placeResolveService) {
 		this.coffeeQueryService = coffeeQueryService;
 		this.notificationService = notificationService;
-		this.distanceStrategy = distanceStrategy;
+		this.profilStrategy = profilStrategy;
 		this.placeResolveService = placeResolveService;
-		this.positionService = positionService;
 	}
 	
 
@@ -81,35 +79,94 @@ public class FindLocationJob implements CoffeeJob {
 			return;
 		}
 		
-		//Find position and use it if changed more than 500 meters		
-		TrackPoint currentTp = positionService.getLastPosition(tp);
 		
+		List<TrackPointCluster> states = profilStrategy.createProfil(tp);
 		
-		//position changed more then 500 meters?
-		if(!distanceStrategy.positionChangeIsRelevant(device.getTrackPoint(),currentTp))
-			return;
-		
-		
-		device.setTrackPoint(currentTp);
-		
-		
-		String adress = placeResolveService.getNearestAdress(currentTp.getPoint());
-		
-		
-		if(adress == null) 
+		if(states.isEmpty())
 		{
-			logger.warn("no position found for {}", device.getId());
+			logger.warn("no states found for {}", device.getId());
 			return;
 		}
 		
-		if(device.getAdress().equals(adress))
+		TrackPointCluster state = states.get(states.size() - 1);
+		
+		//state changed?
+		TrackPointCluster lastState = device.getTrackPointCluster();
+		
+	
+		if(!stateChanged(lastState,state)) return;
+		
+		device.setTrackPointCluster(state);
+		
+		String action = null;
+		switch(state.getType())
+		{
+			case TrackPointCluster.staying:
+				{
+					//Mittelpunkt finden
+					TrackPoint lastTp = state.getLast();
+					action = " is at "+placeResolveService.getNearestAdress(lastTp.getPoint());
+				}
+				break;
+			case TrackPointCluster.moving:
+				{
+					TrackPoint tp2 = state.getLast();
+					Town town2 =  placeResolveService.getNearestTown(tp2.getPoint());
+					action = " reached " + town2.getName();
+				}
+				break;
+		}
+		
+		
+		
+		
+		if(action == null) 
+		{
+			logger.warn("no action found for {}", device.getId());
+			return;
+		}
+		
+		if(device.getAction().equals(action))
 			return;
 		
-		logger.info("new position {} for {}", adress, device.getId());
+		logger.info("new action: {} {}", device.getId(), action);
 
-		device.setAdress(adress);
-		notificationService.sendMessage(device.getId() + " is at " +  adress);
+		device.setAction(action);
+		notificationService.sendMessage(device.getId() + action);
 		
+	}
+
+
+
+	private boolean stateChanged(TrackPointCluster lastState,
+			TrackPointCluster state) {
+
+		if(lastState == null)
+			return true;
+		
+		if(!state.getType().equals(lastState.getType()))
+			return true;
+
+		//same types 
+		switch(state.getType())
+		{
+			case TrackPointCluster.staying:
+				{
+					TrackPoint tp1 = lastState.getFirst();
+					TrackPoint tp2 = state.getFirst();
+					if(tp1.getTime() != tp2.getTime()) return true;
+				}
+				break;
+			case TrackPointCluster.moving:
+				{
+					TrackPoint tp1 = lastState.getLast();
+					TrackPoint tp2 = state.getLast();
+					if(tp2.getTime() - tp1.getTime() > 300) return true;
+				}
+				break;
+		}
+		
+		return false;
 	}
 
 

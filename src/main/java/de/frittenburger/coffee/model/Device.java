@@ -1,12 +1,12 @@
 package de.frittenburger.coffee.model;
 
-import de.frittenburger.geo.model.TrackPoint;
+import de.frittenburger.coffee.impl.TrackPointCluster;
 
 public class Device {
 
 	private final String id;
-	private TrackPoint trackPoint = null;
-	private String adress = "unknown";
+	private TrackPointCluster trackPointCluster = null;
+	private String action = "unknown";
 
 	public Device(String id) {
 		this.id = id;
@@ -16,24 +16,20 @@ public class Device {
 		return id;
 	}
 
-	public TrackPoint getTrackPoint() {
-		return trackPoint;
+	public TrackPointCluster getTrackPointCluster() {
+		return trackPointCluster;
 	}
 
-	public void setTrackPoint(TrackPoint trackPoint) {
-		this.trackPoint = trackPoint;
+	public void setTrackPointCluster(TrackPointCluster trackPointCluster) {
+		this.trackPointCluster = trackPointCluster;
 	}
 
-	public String getAdress() {
-		return adress;
+	public String getAction() {
+		return action;
 	}
 
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAction(String action) {
+		this.action = action;
 	}
-
-
-	
-	
 	
 }

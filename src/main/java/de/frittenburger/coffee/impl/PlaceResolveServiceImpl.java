@@ -99,7 +99,6 @@ public class PlaceResolveServiceImpl implements PlaceResolveService {
 			case 1:
 				return t.get(0);
 		}	}
-	
-	
+
 
 }

@@ -19,26 +19,25 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.Mockito.*;
-import de.frittenburger.coffee.impl.DistanceStrategyImpl;
+import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.impl.FindLocationJob;
+import de.frittenburger.coffee.impl.ProfilStrategyImpl;
+import de.frittenburger.coffee.impl.TrackPointCluster;
 import de.frittenburger.coffee.interfaces.CoffeeJob;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
-import de.frittenburger.coffee.interfaces.DistanceStrategy;
 import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
+import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.Device;
 import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
-import de.frittenburger.geo.impl.PositionServiceImpl;
-import de.frittenburger.geo.interfaces.PositionService;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class FindLocationJobTest {
 
 	private CoffeeQueryService coffeeQueryService;
 	private NotificationService notificationService;
-	private DistanceStrategy distanceStrategy;
+	private ProfilStrategy profilStrategy;
 	private PlaceResolveService placeResolveService;
-	private PositionService positionService;
 
 	
 	
@@ -46,9 +45,8 @@ public class FindLocationJobTest {
 	public void setUp() {
 		coffeeQueryService = mock(CoffeeQueryService.class);
 		notificationService = mock(NotificationService.class);
-		distanceStrategy = mock(DistanceStrategy.class);
+		profilStrategy = mock(ProfilStrategy.class);
 		placeResolveService = mock(PlaceResolveService.class);
-		positionService = mock(PositionService.class);
 	}
 	
 	@Test
@@ -57,26 +55,27 @@ public class FindLocationJobTest {
 		Device device =  new Device("xx");
 		TrackPoint trackpoint = new TrackPoint();
 		trackpoint.setDevice("xx");
-
+		List<TrackPoint> trackPoints = Arrays.asList(trackpoint);
+		TrackPointCluster trackPointCluster = new TrackPointCluster(trackpoint);
+		trackPointCluster.setType(TrackPointCluster.staying);
+		
+		
 		when(coffeeQueryService.getDevices()).thenReturn(Arrays.asList(device));
-		when(coffeeQueryService.getTrackPoints()).thenReturn(Arrays.asList(trackpoint));
+		when(coffeeQueryService.getTrackPoints()).thenReturn(trackPoints);
 		when(coffeeQueryService.getUpdateTime()).thenReturn(1L);
 		
-		when(positionService.getLastPosition(any())).thenReturn(trackpoint);
+		when(profilStrategy.createProfil(trackPoints)).thenReturn(Arrays.asList(trackPointCluster));
 		
-		
-		when(distanceStrategy.positionChangeIsRelevant(null,trackpoint)).thenReturn(true);
 		when(placeResolveService.getNearestAdress(null)).thenReturn("testaddress");
-		CoffeeJob job = new FindLocationJob(coffeeQueryService, notificationService, distanceStrategy, placeResolveService, positionService );
+		CoffeeJob job = new FindLocationJob(coffeeQueryService, notificationService, profilStrategy, placeResolveService );
 		
 		
 		job.exec(0);
 		
-		verify(distanceStrategy).positionChangeIsRelevant(null,trackpoint);
 		
 		//set current Trackpoint and address to device
-		assertEquals(trackpoint, device.getTrackPoint());
-		assertEquals("testaddress", device.getAdress());
+		assertEquals(trackPointCluster, device.getTrackPointCluster());
+		assertEquals(" is at testaddress", device.getAction());
 		
 		//call notificationservice
 		verify(notificationService).sendMessage("xx is at testaddress");   
@@ -116,8 +115,7 @@ public class FindLocationJobTest {
 		
 		
 		CoffeeJob job = new FindLocationJob(coffeeQueryService, notificationService, 
-				new DistanceStrategyImpl(new GeoDistanceServiceImpl()), placeResolveService, 
-				new PositionServiceImpl() );
+				new ProfilStrategyImpl(new GeoDistanceServiceImpl()), placeResolveService );
 		
 		
 		
@@ -127,6 +125,9 @@ public class FindLocationJobTest {
 			when(coffeeQueryService.getTrackPoints()).thenReturn(filtered);
 			when(coffeeQueryService.getUpdateTime()).thenReturn(time);
 			when(placeResolveService.getNearestAdress(any())).thenReturn("address"+time);
+			Town town = new Town();
+			town.setName("Town"+time);
+			when(placeResolveService.getNearestTown(any())).thenReturn(town);
 
 			job.exec(0);
 		
