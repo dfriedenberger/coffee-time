@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,13 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.frittenburger.coffee.impl.ProfilStrategyImpl;
 import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.ProfilLink;
-import de.frittenburger.coffee.model.TrackPointCluster;
 import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class ProfilStrategyImplTest {
-
-	private GeoDistanceServiceImpl distanceService = new GeoDistanceServiceImpl();
 
 	
 	@Test

@@ -20,18 +20,10 @@ public class ProfilStaying extends ProfilLink {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((point == null) ? 0 : point.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
+	public boolean isEqualState(ProfilLink obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if(obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;

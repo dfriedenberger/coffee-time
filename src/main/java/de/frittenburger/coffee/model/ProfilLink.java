@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ProfilLink {
+public abstract class ProfilLink {
 
 	
 	private long time1 = 0;
@@ -23,32 +23,8 @@ public class ProfilLink {
 		return df.format(date1)+" Uhr - "+df.format(date2)+" Uhr";
 	
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (time1 ^ (time1 >>> 32));
-		result = prime * result + (int) (time2 ^ (time2 >>> 32));
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProfilLink other = (ProfilLink) obj;
-		if (time1 != other.time1)
-			return false;
-		if (time2 != other.time2)
-			return false;
-		return true;
-	}
-
-	
+	public abstract boolean isEqualState(ProfilLink lastLink);
+		
 
 }

@@ -102,7 +102,7 @@ public class FindLocationJob implements CoffeeJob {
 		logger.info("device {} last {}",device.getId(),lastLink);
 
 	
-		if(profilLink.equals(lastLink)) return;
+		if(profilLink.isEqualState(lastLink)) return;
 		
 		device.setProfilLink(profilLink);
 		

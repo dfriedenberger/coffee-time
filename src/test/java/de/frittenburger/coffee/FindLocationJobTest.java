@@ -29,7 +29,6 @@ import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.Device;
 import de.frittenburger.coffee.model.ProfilStaying;
-import de.frittenburger.coffee.model.TrackPointCluster;
 import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
 import de.frittenburger.geo.model.TrackPoint;
 

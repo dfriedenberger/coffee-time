@@ -9,19 +9,14 @@ import de.frittenburger.coffee.model.ProfilLink;
 import de.frittenburger.coffee.model.ProfilMoving;
 import de.frittenburger.coffee.model.ProfilStaying;
 import de.frittenburger.coffee.model.TrackPointCluster;
-import de.frittenburger.geo.impl.GeoFinderStategyImpl;
 import de.frittenburger.geo.interfaces.DistanceService;
-import de.frittenburger.geo.interfaces.GeoFinderStategy;
-import de.frittenburger.geo.model.GeoPoint;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class ProfilStrategyImpl implements ProfilStrategy {
 
 	
 	private final DistanceService distanceService;
-	
-	private final GeoFinderStategy finderStategy = new GeoFinderStategyImpl();
-	
+		
 	public ProfilStrategyImpl(DistanceService distanceService)
 	{
 		this.distanceService = distanceService;
@@ -115,9 +110,8 @@ public class ProfilStrategyImpl implements ProfilStrategy {
 					ProfilStaying staying = new ProfilStaying();
 					staying.setTimeRange(time1,time2);
 					
-					//Add Region
-					GeoPoint point = finderStategy.findCenter(tpc.getAll().stream().map(tp -> tp.getPoint()).collect(Collectors.toList()));
-					staying.setPoint(point);
+					//Add Center 
+					staying.setPoint(tpc.getFirst().getPoint());
 					
 					profilLinks.add(staying);
 				break;
