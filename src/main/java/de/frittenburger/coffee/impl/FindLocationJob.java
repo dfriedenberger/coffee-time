@@ -75,7 +75,7 @@ public class FindLocationJob implements CoffeeJob {
 	
 	private void findCurrentPosition(List<TrackPoint> tp, Device device) throws IOException, MetricException {
 		
-		
+
 		if(tp.isEmpty())
 		{
 			logger.warn("no track points found for {}", device.getId());
@@ -94,12 +94,12 @@ public class FindLocationJob implements CoffeeJob {
 		ProfilLink profilLink = links.get(links.size() - 1);
 		
 		//dump 
-		logger.info("curr {}",profilLink);
+		logger.info("device {} curr {}",device.getId(),profilLink);
 
 		
 		//state changed?
 		ProfilLink lastLink = device.getProfilLink();
-		logger.info("last {}",lastLink);
+		logger.info("device {} last {}",device.getId(),lastLink);
 
 	
 		if(profilLink.equals(lastLink)) return;
