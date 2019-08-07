@@ -16,6 +16,9 @@ import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.Device;
 import de.frittenburger.coffee.model.MetricException;
+import de.frittenburger.coffee.model.ProfilLink;
+import de.frittenburger.coffee.model.ProfilMoving;
+import de.frittenburger.coffee.model.ProfilStaying;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class FindLocationJob implements CoffeeJob {
@@ -80,43 +83,43 @@ public class FindLocationJob implements CoffeeJob {
 		}
 		
 		
-		List<TrackPointCluster> states = profilStrategy.createProfil(tp);
+		List<ProfilLink> links = profilStrategy.createProfil(tp);
 		
-		if(states.isEmpty())
+		if(links.isEmpty())
 		{
-			logger.warn("no states found for {}", device.getId());
+			logger.warn("no profil links found for {}", device.getId());
 			return;
 		}
 		
-		TrackPointCluster state = states.get(states.size() - 1);
+		ProfilLink profilLink = links.get(links.size() - 1);
+		
+		//dump 
+		logger.info("curr {}",profilLink);
+
 		
 		//state changed?
-		TrackPointCluster lastState = device.getTrackPointCluster();
-		
+		ProfilLink lastLink = device.getProfilLink();
+		logger.info("last {}",lastLink);
+
 	
-		if(!stateChanged(lastState,state)) return;
+		if(profilLink.equals(lastLink)) return;
 		
-		device.setTrackPointCluster(state);
+		device.setProfilLink(profilLink);
 		
 		String action = null;
-		switch(state.getType())
+		
+		if(profilLink instanceof ProfilStaying)
 		{
-			case TrackPointCluster.staying:
-				{
-					//Mittelpunkt finden
-					TrackPoint lastTp = state.getLast();
-					action = " is at "+placeResolveService.getNearestAdress(lastTp.getPoint());
-				}
-				break;
-			case TrackPointCluster.moving:
-				{
-					TrackPoint tp2 = state.getLast();
-					Town town2 =  placeResolveService.getNearestTown(tp2.getPoint());
-					action = " reached " + town2.getName();
-				}
-				break;
+			ProfilStaying staying = ProfilStaying.class.cast(profilLink);
+			action = " is at "+placeResolveService.getNearestAdress(staying.getPoint());			
 		}
 		
+		if(profilLink instanceof ProfilMoving)
+		{
+			ProfilMoving moving = ProfilMoving.class.cast(profilLink);
+			Town town2 =  placeResolveService.getNearestTown(moving.getEndPoint());
+			action = " reached " + town2.getName();		
+		}
 		
 		
 		
@@ -137,41 +140,6 @@ public class FindLocationJob implements CoffeeJob {
 	}
 
 
-
-	private boolean stateChanged(TrackPointCluster lastState,
-			TrackPointCluster state) {
-
-		if(lastState == null)
-			return true;
-		
-		if(!state.getType().equals(lastState.getType()))
-			return true;
-
-		//same types 
-		switch(state.getType())
-		{
-			case TrackPointCluster.staying:
-				{
-					TrackPoint tp1 = lastState.getFirst();
-					TrackPoint tp2 = state.getFirst();
-					if(tp1.getTime() != tp2.getTime()) return true;
-				}
-				break;
-			case TrackPointCluster.moving:
-				{
-					TrackPoint tp1 = lastState.getLast();
-					TrackPoint tp2 = state.getLast();
-					if(tp2.getTime() - tp1.getTime() > 300) return true;
-				}
-				break;
-		}
-		
-		return false;
-	}
-
-
-	
-	
 	
 	
 }

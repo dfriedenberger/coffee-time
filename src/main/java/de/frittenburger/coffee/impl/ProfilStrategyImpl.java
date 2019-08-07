@@ -1,10 +1,18 @@
 package de.frittenburger.coffee.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import de.frittenburger.coffee.interfaces.ProfilStrategy;
+import de.frittenburger.coffee.model.ProfilLink;
+import de.frittenburger.coffee.model.ProfilMoving;
+import de.frittenburger.coffee.model.ProfilStaying;
+import de.frittenburger.coffee.model.TrackPointCluster;
+import de.frittenburger.geo.impl.GeoFinderStategyImpl;
 import de.frittenburger.geo.interfaces.DistanceService;
+import de.frittenburger.geo.interfaces.GeoFinderStategy;
+import de.frittenburger.geo.model.GeoPoint;
 import de.frittenburger.geo.model.TrackPoint;
 
 public class ProfilStrategyImpl implements ProfilStrategy {
@@ -12,13 +20,15 @@ public class ProfilStrategyImpl implements ProfilStrategy {
 	
 	private final DistanceService distanceService;
 	
+	private final GeoFinderStategy finderStategy = new GeoFinderStategyImpl();
+	
 	public ProfilStrategyImpl(DistanceService distanceService)
 	{
 		this.distanceService = distanceService;
 	}
 	
 	@Override
-	public List<TrackPointCluster> createProfil(List<TrackPoint> trackPoints) {
+	public List<ProfilLink> createProfil(List<TrackPoint> trackPoints) {
 
 		List<TrackPointCluster> clusters = trackPoints.stream().map(tp -> new TrackPointCluster(tp)).collect(Collectors.toList());
 		
@@ -90,11 +100,49 @@ public class ProfilStrategyImpl implements ProfilStrategy {
 		}
 		
 		
+		//map
+		List<ProfilLink> profilLinks = new ArrayList<>();
+		ix = 0;
+		while(ix < clusters.size())
+		{
+			TrackPointCluster tpc = clusters.get(ix);
+			long time1 = tpc.getFirst().getTime();
+			long time2 = tpc.getLast().getTime();
+			
+			switch(tpc.getType())
+			{
+				case TrackPointCluster.staying:
+					ProfilStaying staying = new ProfilStaying();
+					staying.setTimeRange(time1,time2);
+					
+					//Add Region
+					GeoPoint point = finderStategy.findCenter(tpc.getAll().stream().map(tp -> tp.getPoint()).collect(Collectors.toList()));
+					staying.setPoint(point);
+					
+					profilLinks.add(staying);
+				break;
+				case TrackPointCluster.moving:
+					ProfilMoving moving = new ProfilMoving();
+					moving.setTimeRange(time1,time2);
+					moving.setStartPoint(tpc.getFirst().getPoint());
+					moving.setEndPoint(tpc.getLast().getPoint());
+					
+					//Add Distance 
+					double distance = distanceService.getDistance(tpc.getFirst().getPoint(), tpc.getLast().getPoint());
+					moving.setDistance(distance);
+					
+					profilLinks.add(moving);
+
+				break;
+			  default:
+				  throw new RuntimeException("not implemented");
+			}
+			
+			ix++;
+			
+		}
+		return profilLinks;
 		
-		return clusters;
-		
-		
-	
 		
 		
 		

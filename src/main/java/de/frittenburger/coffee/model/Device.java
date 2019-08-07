@@ -1,11 +1,10 @@
 package de.frittenburger.coffee.model;
 
-import de.frittenburger.coffee.impl.TrackPointCluster;
 
 public class Device {
 
 	private final String id;
-	private TrackPointCluster trackPointCluster = null;
+	private ProfilLink profilLink = null;
 	private String action = "unknown";
 
 	public Device(String id) {
@@ -15,13 +14,13 @@ public class Device {
 	public String getId() {
 		return id;
 	}
-
-	public TrackPointCluster getTrackPointCluster() {
-		return trackPointCluster;
+	
+	public ProfilLink getProfilLink() {
+		return profilLink;
 	}
 
-	public void setTrackPointCluster(TrackPointCluster trackPointCluster) {
-		this.trackPointCluster = trackPointCluster;
+	public void setProfilLink(ProfilLink profilLink) {
+		this.profilLink = profilLink;
 	}
 
 	public String getAction() {

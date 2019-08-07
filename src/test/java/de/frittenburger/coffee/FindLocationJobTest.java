@@ -22,13 +22,14 @@ import static org.mockito.Mockito.*;
 import de.frittenburger.api.googleplaces.model.Town;
 import de.frittenburger.coffee.impl.FindLocationJob;
 import de.frittenburger.coffee.impl.ProfilStrategyImpl;
-import de.frittenburger.coffee.impl.TrackPointCluster;
 import de.frittenburger.coffee.interfaces.CoffeeJob;
 import de.frittenburger.coffee.interfaces.CoffeeQueryService;
 import de.frittenburger.coffee.interfaces.NotificationService;
 import de.frittenburger.coffee.interfaces.PlaceResolveService;
 import de.frittenburger.coffee.interfaces.ProfilStrategy;
 import de.frittenburger.coffee.model.Device;
+import de.frittenburger.coffee.model.ProfilStaying;
+import de.frittenburger.coffee.model.TrackPointCluster;
 import de.frittenburger.geo.impl.GeoDistanceServiceImpl;
 import de.frittenburger.geo.model.TrackPoint;
 
@@ -56,15 +57,14 @@ public class FindLocationJobTest {
 		TrackPoint trackpoint = new TrackPoint();
 		trackpoint.setDevice("xx");
 		List<TrackPoint> trackPoints = Arrays.asList(trackpoint);
-		TrackPointCluster trackPointCluster = new TrackPointCluster(trackpoint);
-		trackPointCluster.setType(TrackPointCluster.staying);
+		ProfilStaying staying = new ProfilStaying();
 		
 		
 		when(coffeeQueryService.getDevices()).thenReturn(Arrays.asList(device));
 		when(coffeeQueryService.getTrackPoints()).thenReturn(trackPoints);
 		when(coffeeQueryService.getUpdateTime()).thenReturn(1L);
 		
-		when(profilStrategy.createProfil(trackPoints)).thenReturn(Arrays.asList(trackPointCluster));
+		when(profilStrategy.createProfil(trackPoints)).thenReturn(Arrays.asList(staying));
 		
 		when(placeResolveService.getNearestAdress(null)).thenReturn("testaddress");
 		CoffeeJob job = new FindLocationJob(coffeeQueryService, notificationService, profilStrategy, placeResolveService );
@@ -74,7 +74,7 @@ public class FindLocationJobTest {
 		
 		
 		//set current Trackpoint and address to device
-		assertEquals(trackPointCluster, device.getTrackPointCluster());
+		assertEquals(staying, device.getProfilLink());
 		assertEquals(" is at testaddress", device.getAction());
 		
 		//call notificationservice

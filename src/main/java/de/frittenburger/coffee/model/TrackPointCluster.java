@@ -1,4 +1,4 @@
-package de.frittenburger.coffee.impl;
+package de.frittenburger.coffee.model;
 
 import java.util.ArrayList;
 import java.util.List;

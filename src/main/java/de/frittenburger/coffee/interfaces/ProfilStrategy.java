@@ -2,12 +2,12 @@ package de.frittenburger.coffee.interfaces;
 
 import java.util.List;
 
-import de.frittenburger.coffee.impl.TrackPointCluster;
+import de.frittenburger.coffee.model.ProfilLink;
 import de.frittenburger.geo.model.TrackPoint;
 
 public interface ProfilStrategy {
 
 	
-	List<TrackPointCluster> createProfil(List<TrackPoint> trackPoints);
+	List<ProfilLink> createProfil(List<TrackPoint> trackPoints);
 	
 }

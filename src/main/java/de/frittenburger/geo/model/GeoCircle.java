@@ -3,8 +3,8 @@ package de.frittenburger.geo.model;
 public class GeoCircle extends GeoRegion {
 
 	
-	GeoPoint point;
-	double radius;
+	private GeoPoint point;
+	private double radius;
 	public GeoPoint getPoint() {
 		return point;
 	}

@@ -24,7 +24,6 @@ public class GeoRegion {
 	}
 
 	
-	
 	@Override
 	public String toString() {
 		return "GeoFenceReqion [name=" + name + "]";
