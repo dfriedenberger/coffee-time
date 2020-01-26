@@ -1,0 +1,65 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is a coffee time api.
+  version: 1.0.0
+  title: Coffee-Time Service 
+host: 'localhost'
+basePath: '/api/v1'
+tags:
+  - name: position
+    description: Coffee-Time Service.
+schemes:
+  - http
+securityDefinitions:
+   # X-API-Key: abcdef12345
+   APIKeyHeader:
+     type: apiKey
+     in: header
+     name: X-API-Key
+paths:
+  /currentPosition/{id}:
+    get:
+      tags:
+       - position
+      security:
+        - APIKeyHeader: []
+      operationId: currentPosition
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: id
+          type: string
+          description: The object id 
+      responses:
+        200:
+          description: List of Messages.
+          schema:
+              $ref: '#/definitions/Position'
+        401:
+           $ref: '#/responses/UnauthorizedError'   
+           
+definitions:
+  Position:
+    type: object
+    properties:
+      time:
+        type: integer
+        format: int64
+      latitude:
+        type: number
+        format: double
+      longitude:
+        type: number
+        format: double
+      
+responses:
+  UnauthorizedError:
+    description: API key is missing or invalid
+    headers:
+      WWW_Authenticate:
+        type: string
+        
+

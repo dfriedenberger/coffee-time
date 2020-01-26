@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title th:text="${header}">title place holder</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="css/vorlage.css" >
+	</head>
+	
+
+	<body>
+
+		<!-- handlebar templates -->
+	 	<script id="entry-template" type="text/x-handlebars-template">
+			<span id="{{id}}">{{text}}</span>
+			<br>
+		</script>
+
+
+		<main role="main">
+
+			<!-- Main jumbotron for a primary marketing message or call to action -->
+			<div class="jumbotron">
+			<div class="container">
+				<h1 th:text="${header}">header place holder</h1>
+			</div>
+			</div>
+
+			<div class="container">
+			
+				<p th:text="${message}">Welcome place holder</p>
+				
+				<br>
+
+				<p>Api-Tests for /api/v1/currentPosition/DF (You should see coordinates)</p>
+				<p id="funfacts"></p>
+
+			</div> <!-- /container -->
+
+		</main>
+
+		<footer class="container">
+			<p>&copy; Dirk Friedenberger 2020</p>
+		</footer>
+
+		<script src="js/jquery-3.4.1.min.js"></script>
+		<script src="js/handlebars-v4.1.2.js"></script>
+
+		<script>
+					$(document).ready(function(){
+										
+						var entryTemplateSource   = document.getElementById("entry-template").innerHTML;
+						var entryTemplate = Handlebars.compile(entryTemplateSource);
+
+						var id ="DF";
+						
+						$.getJSON( "/api/v1/currentPosition/"+id , function( position ) {
+
+                            var txt = position.latitude +"," + position.longitude;
+                            
+							var context = {id : id , text : txt };
+							var html    = entryTemplate(context);
+
+							$("#funfacts").append(html);
+
+						}).fail(function() {
+							console.log( "error  getting item " + id);
+						});
+								
+						
+
+					});
+		</script>
+
+	</body>
+
+</html>

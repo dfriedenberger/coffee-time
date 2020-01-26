@@ -1,0 +1,6 @@
+{"_type":"location","acc":16,"alt":236,"batt":71,"conn":"w","inregions":["Coworking Space Nelkenweg"],"lat":49.9752649,"lon":9.2884356,"tid":"DF","tst":1563110848,"vac":2,"vel":0}
+{"_type":"location","batt":79,"lon":12.908028155359515,"acc":12,"p":101.39094543457031,"vel":0,"vac":45,"lat":45.615814208984375,"inregions":["Camping Laguna Village"],"t":"u","conn":"m","tst":1563048216,"alt":57,"tid":"HE"}
+{"_type":"lwt","tst":1563137915}
+{"_type":"location","acc":23,"alt":236,"batt":91,"conn":"w","inregions":["Coworking Space Nelkenweg"],"lat":49.9752094,"lon":9.2886746,"tid":"DF","tst":1563205559,"vac":2,"vel":0}
+{"_type":"transition","acc":16.1,"desc":"Proberaum Weiler","event":"enter","lat":49.9839966,"lon":9.2669373,"t":"l","tid":"DF","tst":1563205904,"wtst":1562785388}
+{"_type":"location","cog":178,"batt":48,"lon":8.6031524657427365,"acc":16,"p":98.761550903320312,"bs":1,"vel":0,"vac":3,"lat":50.6201171875,"inregions":["Coworking Space Friedrichstrasse"],"conn":"w","tst":1579023816,"tid":"HE","alt":217}

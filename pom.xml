@@ -6,45 +6,89 @@
   <name>Coffee Time</name>
   
   <properties>
+		<!-- Config -->
 		<maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Versions-->
+		<swagger.version>1.5.21</swagger.version> 
+		<swagger.codegen.version>2.3.1</swagger.codegen.version> 
+		<swagger.input>${project.basedir}/src/main/resources/swagger/api.yaml</swagger.input>
+		<swagger2markup.plugin.version>1.3.7</swagger2markup.plugin.version>
+		<swagger2markup.extension.version>1.3.1</swagger2markup.extension.version>        
+
+		<!-- Put your dependency versions here -->
         <jackson.version>2.9.9</jackson.version>
-  </properties>
-  
-   <dependencies>
-	 		 	
-            <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
+
+		
+
+	</properties>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.6.RELEASE</version>
+	</parent>
+
+	<dependencies>
+	
+		<!-- swagger for generating rest api's -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+	
+		<!-- Include the web starter _without_tomcat_ (we use jetty) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- We use jetty in our spring boot projects -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		
+		<!-- Useful starter for tests -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Add thymeleaf templating engine support -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		
+		<!-- hot swapping, disable cache for template, enable live reload -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		   <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
             <dependency>
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
                 <version>1.2.1</version>
             </dependency>
-    
-     	<dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <version>2.11.1</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <version>2.11.1</version>
-        </dependency>
-        
-  		<dependency>
-           <groupId>com.fasterxml.jackson.core</groupId>
-           <artifactId>jackson-databind</artifactId>
-           <version>${jackson.version}</version>
-		</dependency>
-			
-			
-		<dependency>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-          <version>4.5.6</version>
-        </dependency>
-        
+            
+      
+            
+            
+		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -58,19 +102,95 @@
     		<version>2.26.0</version>
     		<scope>test</scope>
   		 </dependency>
+  		 
 	</dependencies>
+	 		 	
     
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <configuration>
-                    <mainClass>de.frittenburger.app.CoffeeTimeApplication</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+   	<build>
+		<plugins>
+			<!-- Automatic code generation from swagger. 
+			    define api aml with editor https://swagger-editor.hub.ose.db.de/ -->
+			<plugin>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<version>${swagger.codegen.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>src/main/resources/swagger/api.yaml</inputSpec>
+							<language>spring</language>
+							<configOptions>
+								<sourceFolder>src/main/java</sourceFolder>
+								<library>spring-mvc</library>
+								<dateLibrary>java8</dateLibrary>
+								<useTags>true</useTags>
+								<apiPackage>${project.groupId}.api</apiPackage>
+								<modelPackage>${project.groupId}.model</modelPackage>
+								<interfaceOnly>true</interfaceOnly>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		
+			<!-- To display plugin updates use
+			 mvn versions:display-plugin-updates -->
+			
+			<!-- deactivate deployment to maven repository,
+			     we use docker:push instead -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.4</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<verbose>true</verbose>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<dateFormat>yyyyMMdd-HHmmss</dateFormat>					<!--  human-readable part of the version number -->
+					<excludeProperties>						<!-- exclude user references -->
+						<excludeProperty>git.user.*</excludeProperty>
+						<excludeProperty>git.build.user.*</excludeProperty>
+						<excludeProperty>git.commit.user.*</excludeProperty>
+					</excludeProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
   
 </project>
