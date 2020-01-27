@@ -4,6 +4,8 @@
 		<title th:text="${header}">title place holder</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="css/vorlage.css" >
+		<link href="css/mapbox-gl-js/0.49.0/mapbox-gl.css" rel="stylesheet" />
+		
 	</head>
 	
 
@@ -31,8 +33,9 @@
 				
 				<br>
 
-				<p>Api-Tests for /api/v1/currentPosition/DF (You should see coordinates)</p>
-				<p id="funfacts"></p>
+				<div id="map" style="height: 500px;"></div>
+				<p id="info"></p>
+				
 
 			</div> <!-- /container -->
 
@@ -45,30 +48,62 @@
 		<script src="js/jquery-3.4.1.min.js"></script>
 		<script src="js/handlebars-v4.1.2.js"></script>
 
+		<script src="js/mapbox-gl-js/0.49.0/mapbox-gl.js"></script>
+		<script th:inline="javascript">
+			mapboxgl.accessToken = /*[[${mapboxAccessToken}]]*/ "";
+			var deviceId = /*[[${deviceId}]]*/ "";
+		</script>
+		
 		<script>
 					$(document).ready(function(){
+							
+						
 										
 						var entryTemplateSource   = document.getElementById("entry-template").innerHTML;
 						var entryTemplate = Handlebars.compile(entryTemplateSource);
 
-						var id ="DF";
-						
-						$.getJSON( "/api/v1/currentPosition/"+id , function( position ) {
-
-                            var txt = position.latitude +"," + position.longitude;
-                            
-							var context = {id : id , text : txt };
-							var html    = entryTemplate(context);
-
-							$("#funfacts").append(html);
-
-						}).fail(function() {
-							console.log( "error  getting item " + id);
+						var map = new mapboxgl.Map({
+							container: 'map', // container id
+							style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+							center: [13.404954  , 52.520007], // starting position [lng, lat]
+							zoom: 17 // starting zoom
 						});
-								
 						
+						var marker = new mapboxgl.Marker();
+						
+						function updatePosition()
+						{
+							$.getJSON( "/api/v1/currentPosition/"+deviceId , function( position ) {
+	
+								map.flyTo({
+									center: [position.longitude , position.latitude ],
+									essential: true // this animation is considered essential with respect to prefers-reduced-motion
+								});
+								
+								marker.setLngLat([position.longitude , position.latitude ]);
+	 
+								// Ensure it's added to the map. This is safe to call if it's already added.
+								marker.addTo(map);
+								
+	                            var txt = position.latitude +", " + position.longitude+", "+new Date(position.time * 1000).toISOString();
+	                            
+								var context = {id : deviceId , text : txt };
+								var html    = entryTemplate(context);
+	
+								$("#info").append(html);
+	
+							}).fail(function() {
+								console.log( "error  getting item " + id);
+							});
+							setTimeout(updatePosition,60 * 1000);
+						}
+								
+						updatePosition();
 
 					});
+					
+					
+					
 		</script>
 
 	</body>
