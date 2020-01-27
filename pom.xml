@@ -135,7 +135,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		
 			<!-- To display plugin updates use
 			 mvn versions:display-plugin-updates -->
