@@ -51,7 +51,10 @@ public class MQTTSubscriberImpl implements MQTTSubscriber {
 			options.setKeepAliveInterval(60);
 			options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 
-		
+			//CircuitBreaker 
+			int errorCnt = 0;
+			int maxErrorCnt = 3;
+			
 			while(running)
 			{
 				try {
@@ -67,17 +70,24 @@ public class MQTTSubscriberImpl implements MQTTSubscriber {
 						logger.info("subscribe to topic {}",mqttConfiguration.getTopic());
 			
 						client.subscribe(mqttConfiguration.getTopic(),0);
+						
+						//Reset
+						errorCnt = 0;
 					}
-				
-					Thread.sleep(1000);
-					continue;
+					
 				} 
 				catch(MqttException e)
 				{
+					errorCnt++;
 					logger.error(e);
-					logger.info("wait 10 Seconds before reconnect");
-					Thread.sleep(10000);
+					if(errorCnt >= maxErrorCnt)
+					{
+						logger.info("wait 1 Minute before reconnect");
+						Thread.sleep(60 * 1000);
+					}
 				}
+				Thread.sleep(1000);
+
 			}
 		}
 		catch(InterruptedException e) {

@@ -12,7 +12,7 @@ import de.frittenburger.cqrs.model.LocationEvent;
 
 public class LocationQueryServiceImplTest {
 
-	@Test
+	//@Test
 	public void test() {
 		LocationQueryService queryService = new LocationQueryServiceImpl(new File("data"));
 		

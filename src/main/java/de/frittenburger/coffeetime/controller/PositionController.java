@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
+
 import de.frittenburger.api.PositionApi;
 import de.frittenburger.cqrs.impl.LocationQueryServiceImpl;
 import de.frittenburger.cqrs.interfaces.LocationQueryService;
 import de.frittenburger.cqrs.model.LocationEvent;
 import de.frittenburger.model.Position;
+import de.frittenburger.model.Position.ConnectionEnum;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -45,6 +47,27 @@ public class PositionController implements PositionApi {
     	location.setLatitude(evnt.getLatitude());
     	location.setLongitude(evnt.getLongitude());
     	location.setTime(evnt.getTime());
+    	location.setBattery(evnt.getBattery());
+    	
+    	switch(evnt.getConnection())
+    	{
+    	case Unknown:
+        	location.setConnection(ConnectionEnum.MOBILEDATA);
+        	break;
+
+    	case Offline:
+        	location.setConnection(ConnectionEnum.OFFLINE);
+        	break;
+
+    	case WiFi:
+        	location.setConnection(ConnectionEnum.WIFI);
+        	break;
+
+    	case MobileData:
+        	location.setConnection(ConnectionEnum.MOBILEDATA);
+        	break;
+
+    	}
     	
     	
     	return ok(location);

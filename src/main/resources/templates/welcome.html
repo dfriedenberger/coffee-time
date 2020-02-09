@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="css/vorlage.css" >
 		<link href="css/mapbox-gl-js/0.49.0/mapbox-gl.css" rel="stylesheet" />
+		<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
 		
 	</head>
 	
@@ -22,17 +23,18 @@
 
 			<!-- Main jumbotron for a primary marketing message or call to action -->
 			<div class="jumbotron">
-			<div class="container">
-				<h1 th:text="${header}">header place holder</h1>
-			</div>
+				<div class="container">
+					<h1 th:text="${header}">header place holder</h1>
+				</div>
 			</div>
 
 			<div class="container">
 			
 				<p th:text="${message}">Welcome place holder</p>
+				<span id="timestamp-value">-</span> <i class="fa fa-clock-o" aria-hidden="true"></i>
 				
-				<br>
-
+				<span id="battery-value">-</span> <i id="battery-icon" class="fa fa-battery-full" aria-hidden="true"></i>
+				
 				<div id="map" style="height: 500px;"></div>
 				<p id="info"></p>
 				
@@ -85,7 +87,29 @@
 								// Ensure it's added to the map. This is safe to call if it's already added.
 								marker.addTo(map);
 								
-	                            var txt = position.latitude +", " + position.longitude+", "+new Date(position.time * 1000).toISOString();
+								//battery
+								
+								$("#battery-value").text(position.battery+"%");
+								
+								$("#hello").removeClass (function (index, className) {
+    								return (className.match (/(^|\s)fa-battery-\S+/g) || []).join(' ');
+								});
+								
+								//battery-icon 100 -> 0-5  / 20 
+								var ix = parseInt(position.battery / 20);
+								$("#battery-icon").addClass("fa-battery-"+ix);
+								
+								//timestamp
+								var date = new Date(position.time * 1000);
+								function d2(i) { return i < 0 ? "0"+i : i; };
+								$("#timestamp-value").text(d2(date.getHours())+":"+d2(date.getMinutes()));
+								
+								
+								
+								
+	                            var txt = position.latitude +", " + position.longitude+", "
+	                            	+ date.toISOString()
+	                            	+ " "+ position.battery+"% ("+ix+") "+position.connection;
 	                            
 								var context = {id : deviceId , text : txt };
 								var html    = entryTemplate(context);

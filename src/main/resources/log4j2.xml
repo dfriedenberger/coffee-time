@@ -9,7 +9,6 @@
       fileName="logs/coffee.log"
       filePattern="logs/coffee.%d{yyyy-MM-dd}.log"
       ignoreExceptions="false">
-      <param name="Append" value="true" />
       <PatternLayout>
         <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %logger{36} - %msg%n</Pattern>
       </PatternLayout>
@@ -23,7 +22,7 @@
   <Loggers>
     <Root level="info">
       <AppenderRef ref="RollingFile" />
-      <AppenderRef ref="Console" level="error"/>
+      <AppenderRef ref="Console" level="info"/>
     </Root>
   </Loggers>
 </Configuration>

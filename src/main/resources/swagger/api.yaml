@@ -42,6 +42,7 @@ paths:
            $ref: '#/responses/UnauthorizedError'   
            
 definitions:
+
   Position:
     type: object
     properties:
@@ -54,6 +55,12 @@ definitions:
       longitude:
         type: number
         format: double
+      connection:
+        type: string
+        enum: [ unknown , wifi , offline , mobiledata ]
+      battery:
+        type: integer
+        format: int32
       
 responses:
   UnauthorizedError:

@@ -6,6 +6,10 @@ public class LocationEvent {
 	private long time;
 	private double latitude;
 	private double longitude;
+	
+	private ConnectionType connection;
+	private int battery;
+
 	public String getId() {
 		return id;
 	}
@@ -27,13 +31,32 @@ public class LocationEvent {
 	public double getLongitude() {
 		return longitude;
 	}
+	
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+	
+	public ConnectionType getConnection() {
+		return connection;
+	}
+	
+	public void setConnection(ConnectionType connection) {
+		this.connection = connection;
+	}
+	
+	public int getBattery() {
+		return battery;
+	}
+	public void setBattery(int battery) {
+		this.battery = battery;
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + battery;
+		result = prime * result
+				+ ((connection == null) ? 0 : connection.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(latitude);
@@ -52,6 +75,10 @@ public class LocationEvent {
 		if (getClass() != obj.getClass())
 			return false;
 		LocationEvent other = (LocationEvent) obj;
+		if (battery != other.battery)
+			return false;
+		if (connection != other.connection)
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -70,7 +97,12 @@ public class LocationEvent {
 	@Override
 	public String toString() {
 		return "LocationEvent [id=" + id + ", time=" + time + ", latitude="
-				+ latitude + ", longitude=" + longitude + "]";
+				+ latitude + ", longitude=" + longitude + ", connection="
+				+ connection + ", battery=" + battery + "]";
 	}
+	
+	
+	
+	
 
 }
